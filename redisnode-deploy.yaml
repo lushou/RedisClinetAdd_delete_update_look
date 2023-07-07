@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: redisnode
+  name: redisnode
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redisnode
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: redisnode
+    spec:
+      containers:
+      - image: registry.cn-hangzhou.aliyuncs.com/lushouxin/redisnode:v1
+        name: redisnode
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: redisnode
+  name: redisnode
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: redisnode
+  type: NodePort
+status:
+  loadBalancer: {}
