@@ -17,7 +17,7 @@ func RedisDelete(c *gin.Context) {
 	log.Info(redismstart, redisDelete, password)
 	if redismstart == "" && redisDelete == "" && password == "" {
 		log.Error("传入的数据为空")
-		c.JSON(404, gin.H{"code": 404, "msg": "请进行检查传入的数据，传入的数据出现空的现象"})
+		c.JSON(200, gin.H{"code": 404, "msg": "请进行检查传入的数据，传入的数据出现空的现象", "time": time.Now().Format("20060102_15:04:05")})
 		return
 	}
 	// 进行连接redis
@@ -26,7 +26,7 @@ func RedisDelete(c *gin.Context) {
 	err := determine.RedisPing(rdb)
 	if err != nil {
 		log.Error(err.Error())
-		c.JSON(404, gin.H{"code": 404, "msg": err.Error()})
+		c.JSON(200, gin.H{"code": 404, "msg": err.Error(), "time": time.Now().Format("20060102_15:04:05")})
 		return
 	}
 
@@ -35,14 +35,14 @@ func RedisDelete(c *gin.Context) {
 	if err != nil {
 		Rediserr := fmt.Sprintf("当前%s不是clinet 集群模式", redismstart)
 		log.Error(Rediserr)
-		c.JSON(404, gin.H{"code": 404, "msg": Rediserr})
+		c.JSON(200, gin.H{"code": 404, "msg": Rediserr, "time": time.Now().Format("20060102_15:04:05")})
 		return
 	}
 	// fmt.Println(RedisClineNnode)
 	// 代表上面是集群模式
 	err = determine.RedisDeleteNode(redismstart, password, redisDelete, RedisClineNnode)
 	if err != nil {
-		c.JSON(404, gin.H{"code": 404, "mag": err.Error()})
+		c.JSON(200, gin.H{"code": 404, "mag": err.Error(), "time": time.Now().Format("20060102_15:04:05")})
 		return
 	}
 	log.Info("节点：", redisDelete, "删除成功")

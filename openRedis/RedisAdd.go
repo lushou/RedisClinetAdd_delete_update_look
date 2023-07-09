@@ -17,7 +17,7 @@ func RedisAdd(c *gin.Context) {
 	// 进行判断数据是否是空值，如果是空返回报错
 	if redismstart == "" && redisadd == "" && password == "" {
 		log.Error("传入的数据为空")
-		c.JSON(404, gin.H{"code": 404, "msg": "请进行检查传入的数据，传入的数据出现空的现象"})
+		c.JSON(200, gin.H{"code": 404, "msg": "请进行检查传入的数据，传入的数据出现空的现象", "time": time.Now().Format("20060102_15:04:05")})
 		return
 	}
 	const db = 0
@@ -27,7 +27,7 @@ func RedisAdd(c *gin.Context) {
 	if err != nil {
 		Rediserr := fmt.Sprintf("当前集群%s无法进行连接请进行检查", redismstart)
 		log.Error(Rediserr)
-		c.JSON(404, gin.H{"code": 404, "msg": Rediserr})
+		c.JSON(200, gin.H{"code": 404, "msg": Rediserr, "time": time.Now().Format("20060102_15:04:05")})
 		return
 	}
 	// 进行测试要添加的节点是否可以进行连接：
@@ -37,14 +37,14 @@ func RedisAdd(c *gin.Context) {
 	if err != nil {
 		Rediserr := fmt.Sprintf("当前集群%s无法进行连接请进行检查", redisadd)
 		log.Error(Rediserr)
-		c.JSON(404, gin.H{"code": 404, "msg": Rediserr})
+		c.JSON(200, gin.H{"code": 404, "msg": Rediserr, "time": time.Now().Format("20060102_15:04:05")})
 		return
 	}
 	// 进行检测要进行添加的节点是否有槽，通过有就不让进行添加
 	err = determine.Trough(rdbCong, redismstart, password, redisadd)
 	if err != nil {
 		log.Error(err)
-		c.JSON(404, gin.H{"code": 404, "msg": err.Error()})
+		c.JSON(200, gin.H{"code": 404, "msg": err.Error(), "time": time.Now().Format("20060102_15:04:05")})
 		return
 	}
 	c.JSON(200, gin.H{"code": 200, "msg": "添加完成", "time": time.Now().Format("20060102_15:04:05")})

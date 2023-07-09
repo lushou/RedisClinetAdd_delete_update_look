@@ -16,7 +16,7 @@ func Redisfailover(c *gin.Context) {
 	log.Info(redisslave, password)
 	if redisslave == "" || password == "" {
 		log.Error("传入的数据为空")
-		c.JSON(404, gin.H{"code": 404, "msg": "请进行检查传入的数据，传入的数据出现空的现象"})
+		c.JSON(200, gin.H{"code": 404, "msg": "请进行检查传入的数据，传入的数据出现空的现象", "time": time.Now().Format("20060102_15:04:05")})
 		return
 	}
 	// 进行连接redis
@@ -25,14 +25,14 @@ func Redisfailover(c *gin.Context) {
 	err := determine.RedisPing(rdb)
 	if err != nil {
 		log.Error(err.Error())
-		c.JSON(404, gin.H{"code": 404, "msg": err.Error()})
+		c.JSON(200, gin.H{"code": 404, "msg": err.Error(), "time": time.Now().Format("20060102_15:04:05")})
 		return
 	}
 	RedisClineNnode, err := determine.Redispatching(rdb)
 	if err != nil {
 		Rediserr := fmt.Sprintf("当前%s不是clinet 集群模式", redisslave)
 		log.Error(Rediserr)
-		c.JSON(200, gin.H{"code": 404, "msg": Rediserr})
+		c.JSON(200, gin.H{"code": 404, "msg": Rediserr, "time": time.Now().Format("20060102_15:04:05")})
 		return
 	}
 	// 代表可以连接成功，进行判断连接的节点是否是主节点
@@ -47,6 +47,7 @@ func Redisfailover(c *gin.Context) {
 		c.JSON(200, gin.H{"code": 200, "msg": err.Error(), "time": time.Now().Format("20060102_15:04:05")})
 		return
 	}
+	log.Info("切换成功")
 	c.JSON(200, gin.H{"code": 200, "msg": "切换成功", "time": time.Now().Format("20060102_15:04:05")})
 
 }

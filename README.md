@@ -1,4 +1,10 @@
 # 使用说明
+# 使用视频：
+```shell
+链接：https://pan.baidu.com/s/1BJ1ZTcmIHyXkobCRsCVmqQ?pwd=ge07 
+提取码：ge07 
+--来自百度网盘超级会员V5的分享
+```
 ## 在redis 进群中进行添加redis 节点
 !!! 注意请求建议使用工具进行获取不建议使用命令：# 这边建议使用工具进行传入参数
 ### 传入数据出现的问题
@@ -67,3 +73,27 @@ curl --location --request POST 'http://119.3.229.137:31405/redisfailover/' \
 ### 执行如下：
 ![](images/2023-07-06-16-01-39.png)
 ![](images/2023-07-06-16-00-51.png)
+
+# 进行节点复制：
+
+```shell
+curl --location --request POST 'http://119.3.229.137:31406/redisbiangeng/' \
+--header 'User-Agent: Apifox/1.0.0 (https://apifox.com)' \
+--form 'redismstart="<redismstart>"' \
+--form 'redisslave="<redisslave>"' \
+--form 'passWord="<passWord>"'
+```
+
+
+## 错误是数据
+![](images/2023-07-09-08-42-17.png)
+
+
+## 正确的数据：
+### 操作之前的验证：
+![](images/2023-07-09-08-44-04.png)
+### 进行复制节点：
+![](images/2023-07-09-08-44-41.png)
+
+### 验证后：
+![](images/2023-07-09-08-45-27.png)

@@ -2,6 +2,7 @@ package determine
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -38,20 +39,24 @@ func Redisbiangeng(RedisClineNnode, redismstart, redisslave string, rdbsave *red
 	redismstartList := strings.Split(RedisClineNnode, "\n") // 按换行符进行切割
 	log.Debug(redismstartList)                              // 将查询结果添加到日志中
 
-	var restartID string
+	var redisNnodid string
 	for _, redisIpstr := range redismstartList {
 		if (strings.Contains(redisIpstr, "myself,master") || strings.Contains(redisIpstr, "master")) && strings.Contains(redisIpstr, redismstart) {
-			redisNnodid := strings.Split(redisIpstr, " ")[0] // 提取第一个字段
-			restartID = redisNnodid
-		} else if strings.Contains(redisIpstr, redisslave) {
-			err := rdbsave.ClusterReplicate(context.Background(), restartID).Err()
+			redisNnodid = strings.Split(redisIpstr, " ")[0]
+		} else if strings.Contains(redisIpstr, redismstart) {
+			redislogs := fmt.Sprintf("当前：%s,要进行复制%s，而%s是从节点无法进行复制请进行校验", redisslave, redismstart, redismstart)
+			err := errors.New(redislogs)
+			return err
+		}
+	}
+	for _, redisIpstr := range redismstartList {
+		if strings.Contains(redisIpstr, redisslave) {
+			err := rdbsave.ClusterReplicate(context.Background(), redisNnodid).Err()
 			if err != nil {
 				return err
 			}
 			return nil
 		}
-		redislogs := fmt.Errorf("节点", redisslave, "是主节点")
-		return redislogs
 	}
-	return nil // 处理条件都不满足的情况，返回错误或采取其他处理方式
+	return errors.New("无法进行复制")
 }
